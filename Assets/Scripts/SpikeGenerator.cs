@@ -7,14 +7,20 @@ public class SpikeGenerator : MonoBehaviour
     [SerializeField] private SpikeScript topSpikePrefab;
 
     [Header("Spike Settings")]
+    [Tooltip("Y position for top spike spawn (local to generator)")]
     [SerializeField] private float topSpikeY = -3f;
+    [Tooltip("Y position for bottom spike spawn (local to generator)")]
     [SerializeField] private float bottomSpikeY = -4f;
+    [Tooltip("Chance (0..1) to spawn top spike instead of bottom")]
     [SerializeField] private float chanceForTopSpawn = 0.3f;
 
 
     [Header("Distance Settings")]
+    [Tooltip("Minimum horizontal distance between spawned spikes")]
     [SerializeField] private float minDistance = 5f;
+    [Tooltip("Maximum horizontal distance between spawned spikes")]
     [SerializeField] private float maxDistance = 13f;
+    [Tooltip("Random offset applied to distance to add variety")]
     [SerializeField] private float randomOffset = 0.8f;
 
     [SerializeField] private float baseMinSafeDistance = 6f;

@@ -23,6 +23,8 @@ public class SpeedManager : MonoBehaviour
         }
         Instance = this;
 
+        DontDestroyOnLoad(gameObject);
+
         CurrentSpeed = minSpeed;
     }
 

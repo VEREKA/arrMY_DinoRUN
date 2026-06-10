@@ -15,6 +15,7 @@ public class PoolManager : MonoBehaviour
             return;
         }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     public SpikeScript Spawn(SpikeScript prefab, Vector3 position)
@@ -24,10 +25,16 @@ public class PoolManager : MonoBehaviour
 
         if (pools.TryGetValue(prefab, out var q) && q.Count > 0)
         {
-            var inst = q.Dequeue();
-            inst.gameObject.SetActive(true);
-            inst.transform.position = position;
-            return inst;
+            while (q.Count > 0)
+            {
+                var inst = q.Dequeue();
+                if (inst == null)
+                    continue;
+
+                inst.transform.position = position;
+                inst.gameObject.SetActive(true);
+                return inst;
+            }
         }
 
         var obj = Instantiate(prefab, position, Quaternion.identity);

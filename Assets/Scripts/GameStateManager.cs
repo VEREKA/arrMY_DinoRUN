@@ -19,6 +19,7 @@ public class GameStateManager : MonoBehaviour
             return;
         }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     public void SetState(GameState newState)

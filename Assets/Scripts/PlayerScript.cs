@@ -5,11 +5,15 @@ using TMPro;
 public class PlayerScript : MonoBehaviour
 {
     [Header("Movement")]
+    [Tooltip("Impulse force applied when the player jumps")]
     public float JumpForce = 12f;
+    [Tooltip("Duration of slide in seconds")]
     public float slideDuration = 0.4f;
 
     [Header("Score")]
+    [Tooltip("UI text element displaying current score")]
     public TMP_Text ScoreTxt;
+    [Tooltip("Multiplier applied to score per second")]
     public float scoreMultiplier = 4f;
 
     private float score = 0f;

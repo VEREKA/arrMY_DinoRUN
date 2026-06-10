@@ -17,6 +17,7 @@ public class ScoreManager : MonoBehaviour
             return;
         }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     public void UpdateScore(float score)

@@ -98,6 +98,7 @@ public class MainMenu : MonoBehaviour
         GameStateManager.Instance?.SetState(GameState.Menu);
 
         ScoreManager.Instance?.ResetScore();
+        SpeedManager.Instance?.ResetSpeed();
 
         if (GameStateManager.Instance != null)
             GameStateManager.Instance.OnStateChanged += HandleStateChanged;
