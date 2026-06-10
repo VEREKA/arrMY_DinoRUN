@@ -49,9 +49,9 @@ public class MainMenu : MonoBehaviour
             Time.timeScale = 1f;
             waitingForInput = false;
 
-            pressAnyKeyTxt.gameObject.SetActive(false);
-            arrows.SetActive(false);
-            instructions.SetActive(false);
+            if (pressAnyKeyTxt != null) pressAnyKeyTxt.gameObject.SetActive(false);
+            if (arrows != null) arrows.SetActive(false);
+            if (instructions != null) instructions.SetActive(false);
         }
     }
 
@@ -107,6 +107,6 @@ public class MainMenu : MonoBehaviour
     public void ShowFinalScore(float score)
     {
         if (endscoreTxt != null)
-            endscoreTxt.text = $"GRATULACJE! TWÓJ WYNIK: {score:F0} PKT";
+            endscoreTxt.text = $"GRATULACJE! TWÃ“J WYNIK: {score:F0} PKT";
     }
 }

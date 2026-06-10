@@ -30,11 +30,27 @@ public class PlayerScript : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        col = rb.GetComponent<CapsuleCollider2D>();
+        col = GetComponent<CapsuleCollider2D>();
         anim = GetComponent<Animator>();
 
-        originalColliderSize = col.size;
-        slideColliderSize = new Vector2(col.size.x, col.size.y * 0.65f);
+        if (rb == null)
+        {
+            Debug.LogError("PlayerScript requires a Rigidbody2D component.");
+            enabled = false;
+            return;
+        }
+
+        if (col == null)
+            Debug.LogWarning("PlayerScript: CapsuleCollider2D not found; sliding will be disabled.");
+
+        if (anim == null)
+            Debug.LogWarning("PlayerScript: Animator not found; animations will not play.");
+
+        if (col != null)
+        {
+            originalColliderSize = col.size;
+            slideColliderSize = new Vector2(col.size.x, col.size.y * 0.65f);
+        }
     }
 
     private void Update()
@@ -73,7 +89,7 @@ public class PlayerScript : MonoBehaviour
             }
         }
 
-        // --------------- Podzia³ ekranu ----------------
+        // --------------- Podziaï¿½ ekranu ----------------
         if (inputDown)
         {
             float halfScreen = Screen.height * 0.5f;
@@ -95,7 +111,8 @@ public class PlayerScript : MonoBehaviour
 
         if (Time.time >= nextScoreUpdate)
         {
-            ScoreTxt.text = $"SCORE: {score:F0}";
+            if (ScoreTxt != null)
+                ScoreTxt.text = $"SCORE: {score:F0}";
             nextScoreUpdate = Time.time + 0.1f;
         }
     }
@@ -127,9 +144,11 @@ public class PlayerScript : MonoBehaviour
             return;
 
         isSliding = true;
-        col.size = slideColliderSize;
+        if (col != null)
+            col.size = slideColliderSize;
 
-        anim.SetBool("isSliding", true);
+        if (anim != null)
+            anim.SetBool("isSliding", true);
 
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, -4f);
         Invoke(nameof(stopSlide), slideDuration);
@@ -141,8 +160,11 @@ public class PlayerScript : MonoBehaviour
             return;
 
         isSliding = false;
-        col.size = originalColliderSize;
-        anim.SetBool("isSliding", false);
+        if (col != null)
+            col.size = originalColliderSize;
+
+        if (anim != null)
+            anim.SetBool("isSliding", false);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
