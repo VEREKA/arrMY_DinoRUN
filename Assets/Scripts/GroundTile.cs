@@ -3,11 +3,15 @@ using UnityEngine;
 public class GroundTile : MonoBehaviour
 {
     public float tileWidth = 30.09375f;
-    public SpikeGenerator generator;
+    // GroundTile reads global speed from SpeedManager
 
     private void Update()
     {
-        transform.Translate(Vector2.left * generator.currentSpeed * Time.deltaTime);
+        if (GameStateManager.Instance != null && GameStateManager.Instance.State != GameState.Playing)
+            return;
+
+        float speed = SpeedManager.Instance != null ? SpeedManager.Instance.CurrentSpeed : 5f;
+        transform.Translate(Vector2.left * speed * Time.deltaTime);
 
         if (transform.position.x < -tileWidth)
         {

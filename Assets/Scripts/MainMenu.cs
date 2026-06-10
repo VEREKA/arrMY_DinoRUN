@@ -19,6 +19,7 @@ public class MainMenu : MonoBehaviour
     public GameObject instructions;
 
     private bool waitingForInput = false;
+    private float ignoreInputUntil = 0f;
 
     private void Awake()
     {
@@ -44,14 +45,17 @@ public class MainMenu : MonoBehaviour
     {
         if (!waitingForInput) return;
 
+        if (Time.time < ignoreInputUntil) return;
+
         if (Input.anyKeyDown || Input.touchCount > 0)
         {
-            Time.timeScale = 1f;
             waitingForInput = false;
 
             if (pressAnyKeyTxt != null) pressAnyKeyTxt.gameObject.SetActive(false);
             if (arrows != null) arrows.SetActive(false);
             if (instructions != null) instructions.SetActive(false);
+
+            GameStateManager.Instance?.SetState(GameState.Playing);
         }
     }
 
@@ -68,19 +72,40 @@ public class MainMenu : MonoBehaviour
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
+        if (GameStateManager.Instance != null)
+            GameStateManager.Instance.OnStateChanged += HandleStateChanged;
+
+        if (ScoreManager.Instance != null)
+            ScoreManager.Instance.OnScoreChanged += HandleScoreChanged;
     }
 
     private void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        if (GameStateManager.Instance != null)
+            GameStateManager.Instance.OnStateChanged -= HandleStateChanged;
+
+        if (ScoreManager.Instance != null)
+            ScoreManager.Instance.OnScoreChanged -= HandleScoreChanged;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name != "GameScene") return;
-
-        Time.timeScale = 0f;
         waitingForInput = true;
+        ignoreInputUntil = Time.time + 0.15f;
+
+        GameStateManager.Instance?.SetState(GameState.Menu);
+
+        // ensure score is reset when entering menu
+        ScoreManager.Instance?.ResetScore();
+
+        // ensure we are subscribed to events (in case managers were created after MainMenu.OnEnable)
+        if (GameStateManager.Instance != null)
+            GameStateManager.Instance.OnStateChanged += HandleStateChanged;
+
+        if (ScoreManager.Instance != null)
+            ScoreManager.Instance.OnScoreChanged += HandleScoreChanged;
 
         if (pressAnyKeyTxt != null) pressAnyKeyTxt.gameObject.SetActive(true);
         if (arrows != null) arrows.SetActive(true);
@@ -108,5 +133,20 @@ public class MainMenu : MonoBehaviour
     {
         if (endscoreTxt != null)
             endscoreTxt.text = $"GRATULACJE! TWÓJ WYNIK: {score:F0} PKT";
+    }
+
+    private void HandleStateChanged(GameState state)
+    {
+        if (state == GameState.GameOver)
+        {
+            ShowTryAgain();
+            ShowFinalScore(ScoreManager.Instance != null ? ScoreManager.Instance.CurrentScore : 0f);
+        }
+    }
+
+    private void HandleScoreChanged(float score)
+    {
+        if (livescoreTxt != null)
+            livescoreTxt.text = $"SCORE: {score:F0}";
     }
 }

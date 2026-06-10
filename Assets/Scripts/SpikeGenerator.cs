@@ -11,11 +11,7 @@ public class SpikeGenerator : MonoBehaviour
     [SerializeField] private float bottomSpikeY = -4f;
     [SerializeField] private float chanceForTopSpawn = 0.3f;
 
-    [Header("Speed Settings")]
-    [SerializeField] private float minSpeed = 5f;
-    [SerializeField] private float maxSpeed = 18f;
-    [SerializeField] private float speedMultiplier = 0.12f;
-    public float currentSpeed { get; private set; }
+    // Speed is now managed by SpeedManager
 
     [Header("Distance Settings")]
     [SerializeField] private float minDistance = 5f;
@@ -30,16 +26,16 @@ public class SpikeGenerator : MonoBehaviour
 
     private void Awake()
     {
-        currentSpeed = minSpeed;
         SetNextTargetDistance();
     }
 
     private void Update()
     {
-        if (currentSpeed < maxSpeed)
-            currentSpeed += speedMultiplier * Time.deltaTime;
+        if (GameStateManager.Instance != null && GameStateManager.Instance.State != GameState.Playing)
+            return;
 
-        distanceCounter += currentSpeed * Time.deltaTime;
+        float speed = SpeedManager.Instance != null ? SpeedManager.Instance.CurrentSpeed : 5f;
+        distanceCounter += speed * Time.deltaTime;
 
         if (distanceCounter >= targetDistance)
         {
@@ -70,12 +66,15 @@ public class SpikeGenerator : MonoBehaviour
         }
 
         if (spike != null)
-            spike.Initialize(this);
+            spike.Initialize();
     }
 
     private void SetNextTargetDistance()
     {
-        float speedT = currentSpeed / maxSpeed;
+        float current = SpeedManager.Instance != null ? SpeedManager.Instance.CurrentSpeed : 5f;
+        float maxSpeedLocal = SpeedManager.Instance != null ? SpeedManager.Instance.maxSpeed : 18f; // fallback
+
+        float speedT = maxSpeedLocal > 0f ? current / maxSpeedLocal : 0f;
 
         float baseDist = Mathf.Lerp(maxDistance, minDistance, speedT);
 

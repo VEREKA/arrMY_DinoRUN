@@ -2,17 +2,32 @@ using UnityEngine;
 
 public class SpikeScript : MonoBehaviour
 {
-    private SpikeGenerator generator;
     public SpikeScript prefabSource;
 
-    public void Initialize(SpikeGenerator gen)
+    public void Initialize()
     {
-        generator = gen;
+        // kept for API compatibility; no per-spike generator needed anymore
+    }
+
+    private Rigidbody2D rb;
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.bodyType = RigidbodyType2D.Kinematic;
+            rb.gravityScale = 0f;
+        }
     }
 
     private void Update()
     {
-        transform.Translate(Vector2.left * generator.currentSpeed * Time.deltaTime);
+        if (GameStateManager.Instance != null && GameStateManager.Instance.State != GameState.Playing)
+            return;
+
+        float speed = SpeedManager.Instance != null ? SpeedManager.Instance.CurrentSpeed : 5f;
+        transform.Translate(Vector2.left * speed * Time.deltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D col)

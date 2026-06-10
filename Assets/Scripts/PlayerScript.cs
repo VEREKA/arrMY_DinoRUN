@@ -51,11 +51,38 @@ public class PlayerScript : MonoBehaviour
             originalColliderSize = col.size;
             slideColliderSize = new Vector2(col.size.x, col.size.y * 0.65f);
         }
+
+        if (GameStateManager.Instance != null)
+            GameStateManager.Instance.OnStateChanged += HandleStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        if (GameStateManager.Instance != null)
+            GameStateManager.Instance.OnStateChanged -= HandleStateChanged;
+    }
+
+    private void HandleStateChanged(GameState state)
+    {
+        if (state == GameState.Playing)
+        {
+            score = 0f;
+            nextScoreUpdate = Time.time;
+            isAlive = true;
+            if (rb != null)
+            {
+                rb.bodyType = RigidbodyType2D.Dynamic;
+                rb.linearVelocity = Vector2.zero;
+            }
+        }
     }
 
     private void Update()
     {
         if (!isAlive)
+            return;
+
+        if (GameStateManager.Instance != null && GameStateManager.Instance.State != GameState.Playing)
             return;
 
         // ----------------- PC (klawiatura) -----------------
@@ -194,14 +221,11 @@ public class PlayerScript : MonoBehaviour
 
         rb.linearVelocity = Vector2.zero;
         rb.bodyType = RigidbodyType2D.Kinematic;
-
-        Time.timeScale = 0f;
-
-        MainMenu.Instance?.ShowTryAgain();
-        MainMenu.Instance?.ShowFinalScore(score);
+        ScoreManager.Instance?.UpdateScore(score);
+        GameStateManager.Instance?.SetState(GameState.GameOver);
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-    Application.ExternalCall("SetUnityScore", (int)score);
+        Application.ExternalCall("SetUnityScore", (int)score);
 #endif
     }
 }
