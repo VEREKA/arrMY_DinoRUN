@@ -11,7 +11,6 @@ public class SpikeGenerator : MonoBehaviour
     [SerializeField] private float bottomSpikeY = -4f;
     [SerializeField] private float chanceForTopSpawn = 0.3f;
 
-    // Speed is now managed by SpeedManager
 
     [Header("Distance Settings")]
     [SerializeField] private float minDistance = 5f;
@@ -72,7 +71,7 @@ public class SpikeGenerator : MonoBehaviour
     private void SetNextTargetDistance()
     {
         float current = SpeedManager.Instance != null ? SpeedManager.Instance.CurrentSpeed : 5f;
-        float maxSpeedLocal = SpeedManager.Instance != null ? SpeedManager.Instance.maxSpeed : 18f; // fallback
+        float maxSpeedLocal = SpeedManager.Instance != null ? SpeedManager.Instance.maxSpeed : 18f;
 
         float speedT = maxSpeedLocal > 0f ? current / maxSpeedLocal : 0f;
 

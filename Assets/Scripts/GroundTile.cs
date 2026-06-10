@@ -3,7 +3,6 @@ using UnityEngine;
 public class GroundTile : MonoBehaviour
 {
     public float tileWidth = 30.09375f;
-    // GroundTile reads global speed from SpeedManager
 
     private void Update()
     {

@@ -97,10 +97,8 @@ public class MainMenu : MonoBehaviour
 
         GameStateManager.Instance?.SetState(GameState.Menu);
 
-        // ensure score is reset when entering menu
         ScoreManager.Instance?.ResetScore();
 
-        // ensure we are subscribed to events (in case managers were created after MainMenu.OnEnable)
         if (GameStateManager.Instance != null)
             GameStateManager.Instance.OnStateChanged += HandleStateChanged;
 
