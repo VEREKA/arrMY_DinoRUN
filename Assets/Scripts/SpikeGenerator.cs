@@ -58,8 +58,19 @@ public class SpikeGenerator : MonoBehaviour
         Vector3 pos = transform.position;
         pos.y = top ? topSpikeY : bottomSpikeY;
 
-        SpikeScript spike = Instantiate(prefab, pos, Quaternion.identity);
-        spike.Initialize(this);
+        SpikeScript spike = null;
+        if (PoolManager.Instance != null)
+        {
+            spike = PoolManager.Instance.Spawn(prefab, pos);
+        }
+        else
+        {
+            spike = Instantiate(prefab, pos, Quaternion.identity);
+            spike.prefabSource = prefab;
+        }
+
+        if (spike != null)
+            spike.Initialize(this);
     }
 
     private void SetNextTargetDistance()

@@ -3,6 +3,7 @@ using UnityEngine;
 public class SpikeScript : MonoBehaviour
 {
     private SpikeGenerator generator;
+    public SpikeScript prefabSource;
 
     public void Initialize(SpikeGenerator gen)
     {
@@ -17,6 +18,11 @@ public class SpikeScript : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (col.CompareTag("Finish"))
-            Destroy(gameObject);
+        {
+            if (PoolManager.Instance != null)
+                PoolManager.Instance.Return(this);
+            else
+                Destroy(gameObject);
+        }
     }
 }
